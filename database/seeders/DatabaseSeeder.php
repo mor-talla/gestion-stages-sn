@@ -14,24 +14,32 @@ class DatabaseSeeder extends Seeder
         $this->command->info('🌍 Début du seeding...');
 
         // ============================================
-        // 1. RÉGIONS
+        // 1. RÉGIONS (avec vérification)
         // ============================================
         $this->command->info('📌 Régions...');
         $regions = [];
         $regionsData = ['Dakar', 'Thiès', 'Saint-Louis', 'Diourbel', 'Fatick', 'Kaffrine', 'Kaolack', 'Kédougou', 'Kolda', 'Louga', 'Matam', 'Sédhiou', 'Tambacounda', 'Ziguinchor'];
+        
         foreach ($regionsData as $nom) {
-            $id = DB::table('regions')->insertGetId([
-                'nom' => $nom,
-                'slug' => Str::slug($nom),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            $regions[$nom] = $id;
+            $slug = Str::slug($nom);
+            // Vérifier si la région existe déjà
+            $existing = DB::table('regions')->where('slug', $slug)->first();
+            if ($existing) {
+                $regions[$nom] = $existing->id;
+            } else {
+                $id = DB::table('regions')->insertGetId([
+                    'nom' => $nom,
+                    'slug' => $slug,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $regions[$nom] = $id;
+            }
         }
         $this->command->info('✅ ' . count($regions) . ' régions');
 
         // ============================================
-        // 2. DÉPARTEMENTS
+        // 2. DÉPARTEMENTS (avec vérification)
         // ============================================
         $this->command->info('📌 Départements...');
         $departements = [];
@@ -99,19 +107,31 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($departementsData as $data) {
-            $id = DB::table('departements')->insertGetId([
-                'nom' => $data['nom'],
-                'slug' => Str::slug($data['nom']),
-                'region_id' => $regions[$data['region']],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            $departements[$data['nom']] = $id;
+            $regionId = $regions[$data['region']] ?? null;
+            if (!$regionId) {
+                $this->command->warn("⚠️ Région non trouvée pour : " . $data['nom']);
+                continue;
+            }
+            $slug = Str::slug($data['nom']);
+            // Vérifier si le département existe déjà
+            $existing = DB::table('departements')->where('slug', $slug)->first();
+            if ($existing) {
+                $departements[$data['nom']] = $existing->id;
+            } else {
+                $id = DB::table('departements')->insertGetId([
+                    'nom' => $data['nom'],
+                    'slug' => $slug,
+                    'region_id' => $regionId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $departements[$data['nom']] = $id;
+            }
         }
         $this->command->info('✅ ' . count($departements) . ' départements');
 
         // ============================================
-        // 3. VILLES
+        // 3. VILLES (avec vérification)
         // ============================================
         $this->command->info('📌 Villes...');
 
@@ -171,62 +191,77 @@ class DatabaseSeeder extends Seeder
                 continue;
             }
             foreach ($villes as $villeNom) {
-                DB::table('villes')->insert([
-                    'nom' => $villeNom,
-                    'slug' => Str::slug($villeNom),
-                    'departement_id' => $departementId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                $villeCount++;
+                $slug = Str::slug($villeNom);
+                // Vérifier si la ville existe déjà
+                $existing = DB::table('villes')->where('slug', $slug)->first();
+                if (!$existing) {
+                    DB::table('villes')->insert([
+                        'nom' => $villeNom,
+                        'slug' => $slug,
+                        'departement_id' => $departementId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    $villeCount++;
+                }
             }
         }
-        $this->command->info('✅ ' . $villeCount . ' villes');
+        $this->command->info('✅ ' . $villeCount . ' nouvelles villes ajoutées');
 
         // ============================================
-        // 4. UTILISATEURS
+        // 4. UTILISATEURS (avec vérification)
         // ============================================
         $this->command->info('📌 Utilisateurs...');
 
         // Admin
-        DB::table('users')->insert([
-            'name' => 'Admin Gestion Stages',
-            'email' => 'admin@gestionstages.sn',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'telephone' => '771234567',
-            'adresse' => 'Dakar, Sénégal',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $adminEmail = 'admin@gestionstages.sn';
+        if (!DB::table('users')->where('email', $adminEmail)->exists()) {
+            DB::table('users')->insert([
+                'name' => 'Admin Gestion Stages',
+                'email' => $adminEmail,
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'telephone' => '771234567',
+                'adresse' => 'Dakar, Sénégal',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        // Étudiants
-        DB::table('users')->insert([
-            'name' => 'Baba Niang',
-            'email' => 'baba@isi.sn',
-            'password' => Hash::make('password'),
-            'role' => 'etudiant',
-            'telephone' => '771234568',
-            'adresse' => 'Dakar, Sénégal',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Étudiant 1
+        $etudiant1Email = 'baba@isi.sn';
+        if (!DB::table('users')->where('email', $etudiant1Email)->exists()) {
+            DB::table('users')->insert([
+                'name' => 'Baba Niang',
+                'email' => $etudiant1Email,
+                'password' => Hash::make('password'),
+                'role' => 'etudiant',
+                'telephone' => '771234568',
+                'adresse' => 'Dakar, Sénégal',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        DB::table('users')->insert([
-            'name' => 'Anta Gueye',
-            'email' => 'anta@isi.sn',
-            'password' => Hash::make('password'),
-            'role' => 'etudiant',
-            'telephone' => '771234569',
-            'adresse' => 'Dakar, Sénégal',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Étudiant 2
+        $etudiant2Email = 'anta@isi.sn';
+        if (!DB::table('users')->where('email', $etudiant2Email)->exists()) {
+            DB::table('users')->insert([
+                'name' => 'Anta Gueye',
+                'email' => $etudiant2Email,
+                'password' => Hash::make('password'),
+                'role' => 'etudiant',
+                'telephone' => '771234569',
+                'adresse' => 'Dakar, Sénégal',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        $this->command->info('✅ 3 utilisateurs');
+        $this->command->info('✅ Utilisateurs créés/vérifiés');
 
         // ============================================
-        // 5. ENTREPRISES
+        // 5. ENTREPRISES (avec vérification)
         // ============================================
         $this->command->info('📌 10 entreprises...');
 
@@ -246,25 +281,28 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($entreprises as $data) {
-            DB::table('entreprises')->insert([
-                'nom' => $data['nom'],
-                'slug' => Str::slug($data['nom']) . '-' . uniqid(),
-                'secteur_activite' => $data['secteur_activite'],
-                'email' => $data['email'],
-                'telephone' => $data['telephone'],
-                'adresse' => $data['adresse'],
-                'site_web' => $data['site_web'],
-                'taille' => $data['taille'],
-                'description' => $data['description'],
-                'ville_id' => $villeIds[array_rand($villeIds)],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $email = $data['email'];
+            if (!DB::table('entreprises')->where('email', $email)->exists()) {
+                DB::table('entreprises')->insert([
+                    'nom' => $data['nom'],
+                    'slug' => Str::slug($data['nom']) . '-' . uniqid(),
+                    'secteur_activite' => $data['secteur_activite'],
+                    'email' => $email,
+                    'telephone' => $data['telephone'],
+                    'adresse' => $data['adresse'],
+                    'site_web' => $data['site_web'],
+                    'taille' => $data['taille'],
+                    'description' => $data['description'],
+                    'ville_id' => $villeIds[array_rand($villeIds)],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
-        $this->command->info('✅ 10 entreprises');
+        $this->command->info('✅ 10 entreprises vérifiées');
 
         // ============================================
-        // 6. STAGES
+        // 6. STAGES (avec vérification)
         // ============================================
         $this->command->info('📌 Stages...');
 
@@ -282,27 +320,31 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($stages as $data) {
-            DB::table('stages')->insert([
-                'titre' => $data['titre'],
-                'slug' => Str::slug($data['titre']) . '-' . uniqid(),
-                'description' => 'Stage de ' . $data['duree'] . ' pour ' . $data['titre'] . '. Une excellente opportunité pour développer vos compétences.',
-                'entreprise_id' => $entrepriseIds[array_rand($entrepriseIds)],
-                'ville_id' => $villeIds[array_rand($villeIds)],
-                'duree' => $data['duree'],
-                'date_debut' => now()->addDays(rand(10, 30)),
-                'date_fin' => now()->addDays(rand(100, 200)),
-                'date_limite_candidature' => now()->addDays(rand(5, 20)),
-                'type' => $data['type'],
-                'statut' => ['ouvert', 'en_cours', 'ferme'][rand(0, 2)],
-                'remuneration' => $data['remuneration'],
-                'montant_remuneration' => $data['montant'],
-                'nb_postes' => $data['nb_postes'],
-                'competences_requises' => 'PHP, Laravel, MySQL, Git, travail en équipe',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $titre = $data['titre'];
+            $slug = Str::slug($titre) . '-' . uniqid();
+            if (!DB::table('stages')->where('titre', $titre)->exists()) {
+                DB::table('stages')->insert([
+                    'titre' => $titre,
+                    'slug' => $slug,
+                    'description' => 'Stage de ' . $data['duree'] . ' pour ' . $titre . '. Une excellente opportunité pour développer vos compétences.',
+                    'entreprise_id' => $entrepriseIds[array_rand($entrepriseIds)],
+                    'ville_id' => $villeIds[array_rand($villeIds)],
+                    'duree' => $data['duree'],
+                    'date_debut' => now()->addDays(rand(10, 30)),
+                    'date_fin' => now()->addDays(rand(100, 200)),
+                    'date_limite_candidature' => now()->addDays(rand(5, 20)),
+                    'type' => $data['type'],
+                    'statut' => ['ouvert', 'en_cours', 'ferme'][rand(0, 2)],
+                    'remuneration' => $data['remuneration'],
+                    'montant_remuneration' => $data['montant'],
+                    'nb_postes' => $data['nb_postes'],
+                    'competences_requises' => 'PHP, Laravel, MySQL, Git, travail en équipe',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
-        $this->command->info('✅ ' . count($stages) . ' stages');
+        $this->command->info('✅ ' . count($stages) . ' stages vérifiés');
 
         $this->command->info('🎉 Seeding terminé avec succès !');
     }
