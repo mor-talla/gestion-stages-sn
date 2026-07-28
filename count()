@@ -1,0 +1,1 @@
+"📊 Total des villes : " . DB::table('villes')- . "\n";
