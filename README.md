@@ -1,66 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 Gestion Stages SN
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plateforme web de gestion de stages au Sénégal développée avec **Laravel 10**.  
+Ce projet permet de mettre en relation les étudiants, les entreprises et les administrateurs pour faciliter la recherche et la gestion de stages.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Fonctionnalités du site
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 👨‍🎓 Pour les étudiants
+- Consulter la liste complète des stages disponibles
+- Filtrer les stages par **type** et par **ville**
+- Voir les détails d’un stage (description, entreprise, durée, rémunération)
+- Postuler à un stage en envoyant son **CV** et une **lettre de motivation**
+- Suivre l’état de ses candidatures : **En attente**, **Acceptée** ou **Refusée**
+- Voir ses statistiques personnelles (nombre de candidatures, taux de réussite)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🏢 Pour les entreprises
+- Publier des offres de stage
+- Modifier ou supprimer ses propres offres
+- Consulter la liste des candidatures reçues pour chaque stage
+- **Accepter** ou **refuser** les candidats
+- Voir ses statistiques (nombre de stages publiés, candidatures reçues)
 
-## Learning Laravel
+### 👑 Pour l’administrateur
+- Accéder à un **tableau de bord** avec des statistiques globales :
+  - Nombre total d’utilisateurs, stages, entreprises, candidatures
+  - Répartition des stages par région
+  - Évolution des stages sur 12 mois
+  - Top 5 des entreprises avec le plus de stages
+- Gérer tous les **utilisateurs** (CRUD complet)
+- Gérer toutes les **entreprises** (ajout, modification, suppression)
+- Gérer tous les **stages** (modération)
+- Gérer toutes les **candidatures** (accepter/refuser globalement)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🌍 Fonctionnalités géographiques
+- Données réelles du Sénégal :
+  - **14 régions**
+  - **46 départements**
+  - **200+ villes**
+- Filtrage des stages par localisation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Technologies utilisées
 
-## Laravel Sponsors
+| Catégorie | Technologies |
+|-----------|--------------|
+| Backend | Laravel 10, PHP 8.2 |
+| Frontend | Tailwind CSS, Flowbite, Blade |
+| Base de données | MySQL |
+| Authentification | Laravel Breeze |
+| Graphiques | Chart.js |
+| Animations | CSS3, JavaScript vanilla |
+| Icônes | Font Awesome 6 |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🔑 Comptes de test
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+| Rôle | Email | Mot de passe | Accès |
+|------|-------|--------------|-------|
+| Administrateur | `dabo@isi.sn` | `dabo123` | Gestion totale du site |
+| Étudiant | `dabo.etudiant@isi.sn` | `dabo123` | Consulter et postuler aux stages |
+| Étudiant | `baba@isi.sn` | `password` | Consulter et postuler aux stages |
+| Étudiant | `anta@isi.sn` | `password` | Consulter et postuler aux stages |
+| Entreprise | `contact@sonatel.sn` | `sonatel123` | Publier des stages et gérer les candidatures |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🧭 Accès aux différentes pages
 
-## Code of Conduct
+| Page | URL |
+|------|-----|
+| **Page d'accueil** | `/` |
+| **Liste des stages** | `/stages` |
+| **Liste des entreprises** | `/entreprises` |
+| **Dashboard Administrateur** | `/admin/dashboard` |
+| **Gestion des utilisateurs** | `/admin/users` |
+| **Gestion des entreprises** | `/admin/entreprises` |
+| **Gestion des stages** | `/admin/stages` |
+| **Gestion des candidatures** | `/admin/candidatures` |
+| **Mes candidatures** (étudiant) | `/candidatures` |
+| **Mon profil** | `/profile` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📁 Structure du projet
